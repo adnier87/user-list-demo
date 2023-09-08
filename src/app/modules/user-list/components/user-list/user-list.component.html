@@ -1,1 +1,45 @@
-<p>user-list works!</p>
+<div class="user-list-container">
+
+  
+  <mat-form-field appearance="fill">
+    <mat-label>Filter by Name or Email</mat-label>
+    <input matInput placeholder="john@example or John Doe" [(ngModel)]="filterText" />
+  </mat-form-field>
+  <div class="sorting-options">
+    <mat-radio-group [(ngModel)]="sortingCriterion">
+      <mat-radio-button [value]="'name'">By Name</mat-radio-button>
+      <mat-radio-button [value]="'email'">By Email</mat-radio-button>
+    </mat-radio-group>
+    <button mat-flat-button color="primary" (click)="toggleSortOrder()">
+      Toggle Sort Order
+    </button>
+  </div>
+
+  <ng-container *ngIf="(users$ | async) as users; else loading">
+    <ng-container *ngIf="users.length > 0; else noData">
+      <mat-grid-list cols="4">
+        <mat-grid-tile *ngFor="let user of (users | userFilter: filterText | userSort: sortingCriterion: sortingOrder)">
+          <mat-card>
+            <img mat-card-image [src]="user.avatar" alt="{{ user.name }}" />
+            <mat-card-content>
+              <div class="user-details">
+                <h2>{{ user.name }}</h2>
+                <p>{{ user.email }}</p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </ng-container>
+  </ng-container>
+
+</div>
+
+<ng-template #loading>
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</ng-template>
+
+<ng-template #noData>
+  <div>No data available.</div>
+</ng-template>
+
